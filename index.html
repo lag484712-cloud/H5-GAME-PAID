@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>视觉小游戏 · 解锁体验</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, "Microsoft YaHei", sans-serif;
+      background: linear-gradient(135deg, #eef7ff, #f7f3ff);
+      color: #222;
+    }
+
+    .card {
+      width: 90%;
+      max-width: 420px;
+      background: white;
+      border-radius: 24px;
+      padding: 36px 24px;
+      text-align: center;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.10);
+    }
+
+    .eye {
+      font-size: 52px;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: 26px;
+    }
+
+    .desc {
+      color: #666;
+      line-height: 1.7;
+      font-size: 15px;
+      margin-bottom: 24px;
+    }
+
+    .features {
+      text-align: left;
+      background: #f7f8fa;
+      border-radius: 16px;
+      padding: 16px 18px;
+      line-height: 2;
+      margin-bottom: 24px;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      border: none;
+      border-radius: 14px;
+      padding: 15px;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+      background: #222;
+      color: white;
+    }
+
+    button:hover {
+      opacity: 0.85;
+    }
+
+    .tip {
+      margin-top: 14px;
+      font-size: 12px;
+      color: #999;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="card">
+
+    <div class="eye">👁️</div>
+
+    <h1>视觉挑战小游戏</h1>
+
+    <div class="desc">
+      把枯燥的视觉小任务，
+      变成一关一关可以完成的小游戏。
+    </div>
+
+    <div class="features">
+      🎯 追踪移动目标<br>
+      ⚡ 扫视与寻找挑战<br>
+      🧠 视觉记忆小游戏<br>
+      🌳 远眺与休息提醒<br>
+      🎮 多种趣味视觉任务
+    </div>
+
+    <button onclick="unlockGame()">
+      模拟支付 · 解锁体验
+    </button>
+
+    <div class="tip">
+      当前为测试版本，不会产生真实扣款
+    </div>
+
+  </div>
+
+  <script>
+    function unlockGame() {
+      localStorage.setItem("gameUnlocked", "true");
+      window.location.href = "game.html";
+    }
+  </script>
+
+</body>
+</html>
