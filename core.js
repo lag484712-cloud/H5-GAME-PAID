@@ -1,0 +1,12 @@
+const Core = (()=>{
+ const levels=[.7,.5,.3,.2,.1,0];
+ const median=a=>{const s=[...a].sort((x,y)=>x-y);return s.length?(s[Math.floor((s.length-1)/2)]+s[Math.floor(s.length/2)])/2:null};
+ const sizePx=(log,cm,pxmm)=>2*cm*10*Math.tan((5*Math.pow(10,log)/60)*Math.PI/180/2)*pxmm;
+ function validCalibration(c){return !!c&&Number.isFinite(c.pxmm)&&c.pxmm>=1&&c.pxmm<=15&&Number.isFinite(c.distance)&&c.distance>=40&&c.distance<=400&&c.confirmed===true}
+ function acuityPlan(c){if(!validCalibration(c))return [];return levels.map(log=>({log,size:sizePx(log,c.distance,c.pxmm)})).filter(x=>x.size/5*c.dpr>=1&&x.size<=200)}
+ function symptomSummary(s){if(s.urgent==='yes')return{status:'立即就医',text:'你报告了警示症状。请停止测试与游戏，立即联系眼科或急诊；不要等待报告。'};if(s.urgent!=='no')return{status:'信息不足',text:'警示症状尚未明确，请先核实症状。'};if(Object.values(s.frequency||{}).some(x=>x==='经常'||x==='持续'))return{status:'建议专业评估',text:'存在经常或持续症状。请预约眼科/视光检查，报告可作为沟通记录；症状不能确定病因。'};return{status:'未报告高频症状',text:'这只描述自述频率，不表示眼睛正常，也不能排除无症状疾病。'}}
+ function acuityResult(rows){const groups=[];for(const log of levels){const r=rows.filter(x=>x.log===log);if(r.length)groups.push({log,n:r.length,correct:r.filter(x=>x.correct).length,size:r[0].size})}let best=null,stopped=false,inconsistent=false;for(const g of groups){const pass=g.n===5&&g.correct>=4;if(!pass)stopped=true;else if(stopped)inconsistent=true;else best=g.log}return {groups,best,inconsistent,status:rows.length?'仅任务结果，正常性未判定':'未测',rule:'每档 5 题答对至少 4 题为本程序完成标准；从最大视标开始连续完成才计入最小档位。此规则未经临床验证。'}}
+ function blockResult(id,rows){if(id==='central')return{status:rows.some(r=>r.finding==='发现变化')?'报告了视觉变化，请及时联系眼科':rows.length===2&&rows.every(r=>r.finding==='未发现变化')?'本次未报告变化（不能排除眼病）':'未完成或无法判断',observations:rows};if(id==='acuity')return {right:acuityResult(rows.filter(x=>x.eye==='右眼')),left:acuityResult(rows.filter(x=>x.eye==='左眼'))};if(id==='contrast')return {status:rows.length?'无法判断临床正常性':'未测',groups:[.6,.3,.15,.07].map(alpha=>{const r=rows.filter(x=>x.alpha===alpha);return {alpha,n:r.length,correct:r.filter(x=>x.correct).length}})};const times=rows.filter(x=>!x.timeout&&Number.isFinite(x.ms)).map(x=>x.ms);return {status:rows.length?'无适用常模，正常性未判定':'未测',median:median(times),min:times.length?Math.min(...times):null,max:times.length?Math.max(...times):null,valid:times.length,timeouts:rows.filter(x=>x.timeout).length,early:rows.reduce((s,x)=>s+(x.early||0),0)}}
+ return {levels,median,sizePx,validCalibration,acuityPlan,symptomSummary,acuityResult,blockResult};
+})();
+if(typeof module!=='undefined')module.exports=Core;
